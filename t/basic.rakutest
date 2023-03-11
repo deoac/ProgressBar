@@ -1,0 +1,5 @@
+use v6.d;
+use Progress::Bar;
+use Test;
+
+done-testing;
