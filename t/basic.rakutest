@@ -1,5 +1,58 @@
 use v6.d;
 use Progress::Bar;
 use Test;
+use Test::Output;
+
+plan 2;
+
+say "Please wait ~ 21 seconds...";
+
+output-is {
+    say "Starting...";
+    progress-bar Start;
+    for ^3 { print "$_ "; sleep 1 }
+
+    print "Stopping";
+    progress-bar Stop;
+    for ^3 { print "$_ "; sleep 1 }
+
+    print "Starting";
+    progress-bar Start;
+    for ^3 { print "$_ "; sleep 1 }
+
+    print "Pausing";
+    progress-bar Pause;
+    for ^3 { print "$_ "; sleep 1 }
+
+    print "Re-starting";
+    progress-bar Restart;
+    for ^3 { print "$_ "; sleep 1 }
+
+    print "On-ing";
+    progress-bar Off;
+    for ^3 { print "$_ "; sleep 1 }
+
+    print "Off-ing";
+    progress-bar On;
+    for ^3 { print "$_ "; sleep 1 }
+
+    say "Finished";
+},
+q:to/END/,
+Starting...
+0 # # # # 1 # # # # 2 # # # # Stopping
+0 1 2 Starting
+# 0 # # # 1 # # # # 2 # # # # Pausing
+0 1 2 Re-starting
+# 0 # # # 1 # # # # 2 # # # # On-ing
+0 1 2 Off-ing
+# 0 # # # 1 # # # # 2 # # # # Finished
+END
+
+"Output is good!";
+
+my $time = DateTime.now - BEGIN { DateTime.now };
+is-approx $time, 21, 1, "Took the right amount of time.";
 
 done-testing;
+
