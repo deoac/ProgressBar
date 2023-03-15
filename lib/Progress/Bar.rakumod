@@ -3,29 +3,73 @@ use v6.d;
 unit package Progress::Bar;
 
 #| The progress bar can be turned on and off.
-enum StartStop is export « :Stop(False)   :Start(True)
-                           :Pause(False) :Restart(True)»;
+#| Pause, Restart, Off, and On are just aliases.
+enum StartStop is export «
+                          :Stop(False)  :Start(True)
+                          :Pause(False) :Restart(True)
+                          :Off(False)   :On(True)
+                         »;
 
+# We've provided two special progress "bar"s.
+enum PreDefined is export «Spinner Counter»;
+
+use Terminal::ANSI; # only needed for showing/hiding the cursor.
+END { show-cursor }
+
+# The progress bar is a Counter
+multi progress-bar (PreDefined $type where $type == Counter) {
+    progress-bar
+        Start,
+        symbols         => 0..∞,
+        carriage-return => True,
+        sleep-time      => 0.12,
+} # end of multi progress-bar (PreDefined $type where $type == Counter)
+
+# The progress bar is a Spinner
+multi progress-bar (PreDefined $type where $type == Spinner) {
+    progress-bar
+        Start,
+        symbols         => «| / - \\»,
+        carriage-return => True,
+        sleep-time      => 0.15,
+} # end of multi progress-bar (PreDefined $type where $type == Spinner)
+
+# The generic progress bar.
+# By default it outputs ' # ' every quarter second until told to stop.
 my Bool $stop-progress-bar = False;
+multi progress-bar (StartStop:D  $start,
+                    Str         :$symbol          = '#',
+                                :@symbols,
+                    Bool:D      :$carriage-return = False,
+                    Int:D       :$spaces          = 1,
+                    Rat:D       :$sleep-time      = 0.25) is export {
+    # If we'll be printing a <CR> after every symbol,
+    # we don't want to see the cursor
+    hide-cursor if $carriage-return;
 
-sub progress-bar (StartStop:D  $start,
-                  Str:D       :$symbol     = '#',
-                  Str         :@symbols,
-                  Int:D       :$spaces     = 1,
-                  Rat:D       :$sleep-time = 0.25) is export {
-    @symbols = [$symbol] unless @symbols;
+    # The symbol argument can be one character or an array of characters.
+    # If there's only one, make it the first (and only) element of the array.
+    @symbols.push($symbol) unless @symbols;
     my $num-symbols = @symbols.elems;
     if $start {
         # print a newline unless we've already started
         print "\n" unless $stop-progress-bar == False;
         $stop-progress-bar = False;
         start repeat {
-            print @symbols[$++ % $num-symbols], ' ' x $spaces;
+            # If @symbols is a lazy list, don't loop through the inifinite list.
+            # If it's not lazy, then loop through the finite list.
+            print @symbols.is-lazy ?? @symbols[$++]
+                                   !! @symbols[$++ % $num-symbols];
+
+            # The symbol will be followed be either a <CR>
+            # or a set number of spaces.
+            print $carriage-return ?? "\r"
+                                   !! ' ' x $spaces;
+
             sleep $sleep-time;
         } until $stop-progress-bar;
-
     }
-    else {
+    else { # Stop (or Pause) the progress bar.
         # print a newline unless we've already stopped
         print "\n" unless $stop-progress-bar == True;
         $stop-progress-bar = True;
