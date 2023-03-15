@@ -1,19 +1,20 @@
 {
   "name": "Progress::Bar",
-  "description": "Write me!",
+
+  "description": "A module to start and stop a progress bar, while a program is compiling and running.",
   "version": "0.1",
-  "perl": "6.*",
+  "raku": "6.d",
   "authors": [
-    "Write me!"
+    "Shimon Bollinger"
   ],
-  "auth": "Write me!",
-  "depends": [],
+  "auth": "Shimon Bollinger",
+  "depends": ["Terminal::ANSI"],
   "build-depends": [],
-  "test-depends": [],
+  "test-depends": ["Test", "Trap"],
   "provides": {
     "Progress::Bar": "lib/Progress/Bar.rakumod"
   },
   "resources": [],
-  "license": "Write me!",
+  "license": "Artistic-2.0",
   "source-url": "Write me!"
 }
