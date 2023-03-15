@@ -1,13 +1,58 @@
 use v6.d;
 use Progress::Bar;
 use Test;
-use Test::Output;
 
 plan 2;
 
+my $progress-bar1 = '0 # # # # 1 # # # # 2 # # # #';
+my $progress-bar2 = '# 0 # # # 1 # # # # 2 # # # #';
+
+# Depending on the precise timing,
+# we could get any of the following as output for testing.
+
+my $output1 = qq:to/END/;
+Starting...
+$progress-bar1 Stopping
+0 1 2 Starting
+$progress-bar1 Pausing
+0 1 2 Re-starting
+$progress-bar1 On-ing
+0 1 2 Off-ing
+$progress-bar1 Finished
+END
+
+my $output2 = qq:to/END/;
+Starting...
+$progress-bar2 Stopping
+0 1 2 Starting
+$progress-bar2 Pausing
+0 1 2 Re-starting
+$progress-bar2 On-ing
+0 1 2 Off-ing
+$progress-bar2 Finished
+END
+
+my $output3 = qq:to/END/;
+Starting...
+$progress-bar1 Stopping
+0 1 2 Starting
+$progress-bar2 Pausing
+0 1 2 Re-starting
+$progress-bar2 On-ing
+0 1 2 Off-ing
+$progress-bar2 Finished
+END
+
 say "Please wait ~ 21 seconds...";
 
-output-is {
+my $out;
+my $err;
+{
+    use Trap;
+    $out = Trap(my $*OUT);
+    $err = Trap(my $*ERR);
+
+
     say "Starting...";
     progress-bar Start;
     for ^3 { print "$_ "; sleep 1 }
@@ -37,19 +82,8 @@ output-is {
     for ^3 { print "$_ "; sleep 1 }
 
     say "Finished";
-},
-q:to/END/,
-Starting...
-0 # # # # 1 # # # # 2 # # # # Stopping
-0 1 2 Starting
-# 0 # # # 1 # # # # 2 # # # # Pausing
-0 1 2 Re-starting
-# 0 # # # 1 # # # # 2 # # # # On-ing
-0 1 2 Off-ing
-# 0 # # # 1 # # # # 2 # # # # Finished
-END
-
-"Output is good!";
+};
+is $out.text(), $output1|$output2|$output3, "Output is good!";
 
 my $time = DateTime.now - BEGIN { DateTime.now };
 is-approx $time, 21, 1, "Took the right amount of time.";
