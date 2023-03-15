@@ -17,3 +17,9 @@ for ^3 { print "$_ "; sleep 1 }
 print "Re-starting";
 progress-bar Restart;
 for ^3 { print "$_ "; sleep 1 }
+print "On-ing";
+progress-bar Off;
+for ^3 { print "$_ "; sleep 1 }
+print "Off-ing";
+progress-bar On;
+for ^3 { print "$_ "; sleep 1 }
