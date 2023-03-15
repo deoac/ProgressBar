@@ -2,13 +2,13 @@ use v6.d;
 #===============================================================================
 #         FiLE: Bar.rakumod
 #
-#  Description: A module to start and stop a progress bar, 
+#  Description: A module to start and stop a progress bar,
 #               while a program is compiling and running.
 #
 #          Notes:
 #         Author: <Shimon Bollinger>  (<deoac.bollinger@gmail.com>)
-#        Version: 0.0.1
-#  Last Modified: Wed 15 Mar 2023 06:34:17 PM EDT
+#        Version: 0.1
+#  Last Modified: Wed 15 Mar 2023 07:28:22 PM EDT
 #===============================================================================
 
 unit package Progress::Bar;
@@ -96,12 +96,13 @@ multi progress-bar (StartStop:D  $start,
 
 =head1 NAME
 
-Progress::Bar - Start and stop a progress bar while a program is running
+Progress::Bar - Start and stop a progress bar
+while a program is compiling and  running
 
 
 =head1 VERSION
 
-This documentation refers to <Progress::Bar> version 0.0.1
+This documentation refers to C<Progress::Bar> version 0.1
 
 
 =head1 USAGE

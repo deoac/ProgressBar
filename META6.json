@@ -7,7 +7,7 @@
   "authors": [
     "Shimon Bollinger"
   ],
-  "auth": "Shimon Bollinger",
+  "auth": "github:deoac",
   "depends": ["Terminal::ANSI"],
   "build-depends": [],
   "test-depends": ["Test", "Trap"],
@@ -16,5 +16,5 @@
   },
   "resources": [],
   "license": "Artistic-2.0",
-  "source-url": "Write me!"
+  "source-url": "https://github.com/deoac/ProgressBar"
 }
