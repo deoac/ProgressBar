@@ -1,4 +1,15 @@
 use v6.d;
+#===============================================================================
+#         FiLE: Bar.rakumod
+#
+#  Description: A module to start and stop a progress bar, 
+#               while a program is compiling and running.
+#
+#          Notes:
+#         Author: <Shimon Bollinger>  (<deoac.bollinger@gmail.com>)
+#        Version: 0.0.1
+#  Last Modified: Wed 15 Mar 2023 06:34:17 PM EDT
+#===============================================================================
 
 unit package Progress::Bar;
 
@@ -14,7 +25,6 @@ enum StartStop is export «
 enum PreDefined is export «Spinner Counter»;
 
 use Terminal::ANSI; # only needed for showing/hiding the cursor.
-END { show-cursor }
 
 # The progress bar is a Counter
 multi progress-bar (PreDefined $type where $type == Counter) {
@@ -74,7 +84,9 @@ multi progress-bar (StartStop:D  $start,
         print "\n" unless $stop-progress-bar == True;
         $stop-progress-bar = True;
     }
+    show-cursor if $carriage-return;
 } # end of multi progress-bar (StartStop $start,
+
 ##############################################################################
 ##    Example 7.1 (Recommended) from Chapter 7 of "Perl Best Practices"     ##
 ##     Copyright (c) O'Reilly & Associates, 2005. All Rights Reserved.      ##
