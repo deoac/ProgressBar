@@ -6,72 +6,78 @@ use v6.d;
 #               while a program is compiling and running.
 #
 #          Notes:
-#         Author: <Shimon Bollinger>  (<deoac.bollinger@gmail.com>)
-#        Version: 0.1
-#  Last Modified: Wed 15 Mar 2023 07:28:22 PM EDT
+#         Author: <Shimon Bollinger>  (<deoac.shimon@gmail.com>)
+#        Version: 1.0
+#  Last Modified: Wed 15 Mar 2023 10:15:55 PM EDT
 #===============================================================================
 
 unit package Progress::Bar;
 
-#| The progress bar can be turned on and off.
-#| Pause, Restart, Off, and On are just aliases.
+# The progress bar can be turned on and off.
+# Pause, Resume, Off, and On are just aliases.
 enum StartStop is export «
                           :Stop(False)  :Start(True)
-                          :Pause(False) :Restart(True)
+                          :Pause(False) :Resume(True)
                           :Off(False)   :On(True)
+                          :Spinner(2)   :Counter(3)
                          »;
 
-# We've provided two special progress "bar"s.
-enum PreDefined is export «Spinner Counter»;
-
-use Terminal::ANSI; # only needed for showing/hiding the cursor.
+sub hide-cursor { print "\e[?25l"; }
+sub show-cursor { print "\e[?25h"; }
+END { show-cursor }
 
 # The progress bar is a Counter
-multi progress-bar (PreDefined $type where $type == Counter) {
+multi progress-bar (StartStop $type where $type eq Counter) {
+note "Counting! $type";
     progress-bar
         Start,
         symbols         => 0..∞,
         carriage-return => True,
-        sleep-time      => 0.12,
-} # end of multi progress-bar (PreDefined $type where $type == Counter)
+} # end of multi progress-bar (PreDefined $type where $type eq Counter)
 
 # The progress bar is a Spinner
-multi progress-bar (PreDefined $type where $type == Spinner) {
+multi progress-bar (StartStop $type where $type eq Spinner) {
+note "Spinning! $type";
     progress-bar
         Start,
         symbols         => «| / - \\»,
         carriage-return => True,
-        sleep-time      => 0.15,
-} # end of multi progress-bar (PreDefined $type where $type == Spinner)
+} # end of multi progress-bar (PreDefined $type where $type eq Spinner)
 
+#TODO Add progress-bar that toggles
+##TODO Make the symbol a static, so Resume uses the same character
+#
 # The generic progress bar.
 # By default it outputs ' # ' every quarter second until told to stop.
 my Bool $stop-progress-bar = False;
 multi progress-bar (StartStop:D  $start,
-                    Str         :$symbol          = '#',
+                    Str:D       :$symbol          = '#',
                                 :@symbols,
                     Bool:D      :$carriage-return = False,
                     Int:D       :$spaces          = 1,
-                    Rat:D       :$sleep-time      = 0.25) is export {
-    # If we'll be printing a <CR> after every symbol,
-    # we don't want to see the cursor
-    hide-cursor if $carriage-return;
+                    Rat()       :$sleep-time      = 0.25) is export {
 
     # The symbol argument can be one character or an array of characters.
     # If there's only one, make it the first (and only) element of the array.
     @symbols.push($symbol) unless @symbols;
     my $num-symbols = @symbols.elems;
-    if $start {
-        # print a newline unless we've already started
-        print "\n" unless $stop-progress-bar == False;
-        $stop-progress-bar = False;
+    if $start.so {
+note "\nStarted! $start; $stop-progress-bar";
+        # If we'll be printing a <CR> after every symbol,
+        # we don't want to see the cursor
+        hide-cursor if $carriage-return;
+
         start repeat {
+            # print a newline unless we've already started
+            print "\n" unless $stop-progress-bar.not;
+            $stop-progress-bar = False;
+
             # If @symbols is a lazy list, don't loop through the inifinite list.
             # If it's not lazy, then loop through the finite list.
-            print @symbols.is-lazy ?? @symbols[$++]
+            say @symbols.is-lazy ?? @symbols[$++]
                                    !! @symbols[$++ % $num-symbols];
 
-            # The symbol will be followed be either a <CR>
+            # The symbol will be followed by either a <CR>
             # or a set number of spaces.
             print $carriage-return ?? "\r"
                                    !! ' ' x $spaces;
@@ -79,12 +85,18 @@ multi progress-bar (StartStop:D  $start,
             sleep $sleep-time;
         } until $stop-progress-bar;
     }
-    else { # Stop (or Pause) the progress bar.
+    elsif $start.not {
+note "\nStopped! $start; $stop-progress-bar";
         # print a newline unless we've already stopped
-        print "\n" unless $stop-progress-bar == True;
+        print "\n" unless $stop-progress-bar.so;
         $stop-progress-bar = True;
+        show-cursor if $carriage-return;
     }
-    show-cursor if $carriage-return;
+    else {
+note "\nOther! $start; $stop-progress-bar";
+        progress-bar $start, :$symbol, :@symbols,
+                     :$carriage-return, :$spaces, :$sleep-time;
+    }
 } # end of multi progress-bar (StartStop $start,
 
 ##############################################################################
@@ -102,7 +114,7 @@ while a program is compiling and  running
 
 =head1 VERSION
 
-This documentation refers to C<Progress::Bar> version 0.1
+This documentation refers to C<Progress::Bar> version 1.0.
 
 
 =head1 USAGE
@@ -110,97 +122,116 @@ This documentation refers to C<Progress::Bar> version 0.1
     use Progress::Bar;
 
     progress-bar Start;
+    progress-bar Counter;
+    progress-bar Spinner;
     progress-bar Stop;
-    progress-bar Restart;  # An alias for Start
-    progress-bar Pause;    # An alias for Stop
-
-=head1 REQUIRED ARGUMENTS
-
-A complete list of every argument that must appear on the command line.
-when the application  is invoked, explaining what each of them does, any
-restrictions on where each one may appear (i.e. flags that must appear
-before or after filenames), and how the various arguments and options
-may interact (e.g. mutual exclusions, required combinations, etc.)
-
-If all of the application's arguments are optional this section
-may be omitted entirely.
-
-
-=head1 OPTIONS
-
-A complete list of every available option with which the application
-can be invoked, explaining what each does, and listing any restrictions,
-or interactions.
-
-If the application has no options this section may be omitted entirely.
-
 
 =head1 DESCRIPTION
 
-A full description of the application and its features.
-May include numerous subsections (i.e. =head2, =head3, etc.)
+If compiling takes a long time, or there are significant wait-times while
+running, it's nice to show a progress bar.  The user then knows the
+program is still working and not hung or in an infinite loop.
 
+=head2 Simplest Use
+
+The simplest use is to put C<progress-bar Start;> and C<progress-bar Stop;> at
+the appropriate places in your code.
+
+The progress bar will look like this: C<# # # # # # # ...>
+
+You can use C<On> and C<Resume> as synonyms for C<Start>;
+C<Off> and C<Pause> as synonyms for C<Stop>.
+
+=head2 Counter
+
+    progress-bar Counter;
+
+The progress bar will simply be the integers increasing every 0.15 seconds.
+Use C<progress-bar Stop> to, well, I<stop> the Counter.
+
+=head2 Spinner
+
+    progress-bar Spinner;
+
+The progress bar will loop thru these characters: C<| / - \>
+Use C<Stop> to, well, I<stop> the Spinner.
+
+=head1 OPTIONS
+
+The function has the following Signature:
+
+    enum StartStop is export «
+                            :Stop(False)  :Start(True)
+                            :Pause(False) :Resume(True)
+                            :Off(False)   :On(True)
+                            »;
+    multi progress-bar (StartStop:D  $start,
+                        Str         :$symbol,
+                                    :@symbols         = [ '#' ],
+                        Bool:D      :$carriage-return = False,
+                        Int:D       :$spaces          = 1,
+                        Rat:D       :$sleep-time      = 0.25)
+
+=head2 $start  (Required)
+
+Any one of C<Start>, C<Stop>, C<Resume>, C<Pause>, C<On>, or C<Off>.
+
+=head2 $symbol (Optional)
+
+Defaults to the empty string.
+
+=head2 :@symbols (Optional)
+
+Defaults to an array of one element, C<#>.
+
+=head2 :$carriage-return (Optional)
+
+Defaults to C<False>.
+
+=head2 :$spaces (Optional)
+
+Defaults to 1 space.
+
+=head2 :$sleep-time (Optional)
+
+Defaults to 0.25 seconds.
 
 =head1 DIAGNOSTICS
 
-A list of every error and warning message that the application can generate
-(even the ones that will "never happen"), with a full explanation of each
-problem, one or more likely causes, and any suggested remedies. If the
-application generates exit status codes (e.g. under Unix) then list the exit
-status associated with each error.
-
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-A full explanation of any configuration system(s) used by the application,
-including the names and locations of any configuration files, and the
-meaning of any environment variables or properties that can be set. These
-descriptions must also include details of any configuration language used
-(also see  QUOTE \" " INCLUDETEXT "19_Miscellanea" "XREF40334_Configuration_Files_"\! Configuration Files QUOTE \" " QUOTE " in Chapter "  in Chapter  INCLUDETEXT "19_Miscellanea" "XREF55683__"\! 19).
+None.
 
 
 =head1 DEPENDENCIES
 
-A list of all the other modules that this module relies upon, including any
-restrictions on versions, and an indication whether these required modules are
-part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
+    use Terminal::ANSI
 
+=head1 TESTING
+
+You will need
+
+        use Test;
+        use Trap;
+
+to run the tests.
 
 =head1 INCOMPATIBILITIES
 
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for
-system or program resources, or due to internal limitations of Perl
-(for example, many modules that use source code filters are mutually
-incompatible).
-
+None known.
 
 =head1 BUGS AND LIMITATIONS
 
-A list of known problems with the module, together with some indication
-whether they are likely to be fixed in an upcoming release.
-
-Also a list of restrictions on the features the module does provide:
-data types that cannot be handled, performance issues and the circumstances
-in which they may arise, practical limitations on the size of data sets,
-special cases that are not (yet) handled, etc.
-
-The initial template usually just has:
-
 There are no known bugs in this module.
-Please report problems to <Shimon Bollinger>  (<deoac.shimon@gmail.com>)
-Patches are welcome.
 
 =head1 AUTHOR
 
-<Shimon Bollinger>  (<deoac.shimon@gmail.com>)
+Shimon Bollinger  (deoac.shimon@gmail.com)
 
+Comments, pull requests, problems, and suggestions are welcome.
 
 =head1 LICENCE AND COPYRIGHT
 
 This module is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself. See L<perlartistic|http://perldoc.perl.org/perlartistic.html>.
+modify it under the L<perlartistic|http://perldoc.perl.org/perlartistic.html>.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
