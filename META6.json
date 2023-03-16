@@ -2,7 +2,7 @@
   "name": "Progress::Bar",
 
   "description": "A module to start and stop a progress bar, while a program is compiling and running.",
-  "version": "0.1",
+  "version": "1.0",
   "raku": "6.d",
   "authors": [
     "Shimon Bollinger"
