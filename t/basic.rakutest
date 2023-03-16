@@ -15,7 +15,7 @@ Starting...
 $progress-bar1 Stopping
 0 1 2 Starting
 $progress-bar1 Pausing
-0 1 2 Re-starting
+0 1 2 Resuming
 $progress-bar1 On-ing
 0 1 2 Off-ing
 $progress-bar1 Finished
@@ -26,7 +26,7 @@ Starting...
 $progress-bar2 Stopping
 0 1 2 Starting
 $progress-bar2 Pausing
-0 1 2 Re-starting
+0 1 2 Resuming
 $progress-bar2 On-ing
 0 1 2 Off-ing
 $progress-bar2 Finished
@@ -37,7 +37,7 @@ Starting...
 $progress-bar1 Stopping
 0 1 2 Starting
 $progress-bar2 Pausing
-0 1 2 Re-starting
+0 1 2 Resuming
 $progress-bar2 On-ing
 0 1 2 Off-ing
 $progress-bar2 Finished
@@ -69,8 +69,8 @@ my $err;
     progress-bar Pause;
     for ^3 { print "$_ "; sleep 1 }
 
-    print "Re-starting";
-    progress-bar Restart;
+    print "Resuming";
+    progress-bar Resume;
     for ^3 { print "$_ "; sleep 1 }
 
     print "On-ing";
