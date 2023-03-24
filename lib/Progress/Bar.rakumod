@@ -8,7 +8,7 @@ use v6.d;
 #          Notes:
 #         Author: <Shimon Bollinger>  (<deoac.shimon@gmail.com>)
 #        Version: 1.0
-#  Last Modified: Wed 15 Mar 2023 10:15:55 PM EDT
+#  Last Modified: Tue 21 Mar 2023 05:29:29 PM EDT
 #===============================================================================
 
 unit package Progress::Bar;
@@ -28,7 +28,6 @@ END { show-cursor }
 
 # The progress bar is a Counter
 multi progress-bar (StartStop $type where $type eq Counter) {
-note "Counting! $type";
     progress-bar
         Start,
         symbols         => 0..∞,
@@ -37,7 +36,6 @@ note "Counting! $type";
 
 # The progress bar is a Spinner
 multi progress-bar (StartStop $type where $type eq Spinner) {
-note "Spinning! $type";
     progress-bar
         Start,
         symbols         => «| / - \\»,
@@ -49,53 +47,62 @@ note "Spinning! $type";
 #
 # The generic progress bar.
 # By default it outputs ' # ' every quarter second until told to stop.
-my Bool $stop-progress-bar = False;
+our $progress-bar-is-running is export = False;
+
 multi progress-bar (StartStop:D  $start,
                     Str:D       :$symbol          = '#',
-                                :@symbols,
+                                :@symbols         = [],
                     Bool:D      :$carriage-return = False,
                     Int:D       :$spaces          = 1,
                     Rat()       :$sleep-time      = 0.25) is export {
 
-    # The symbol argument can be one character or an array of characters.
-    # If there's only one, make it the first (and only) element of the array.
-    @symbols.push($symbol) unless @symbols;
-    my $num-symbols = @symbols.elems;
+    state Thread $t;
     if $start.so {
-note "\nStarted! $start; $stop-progress-bar";
+        if $progress-bar-is-running  {
+            progress-bar Stop;
+        } # end of if $progress-bar-is-running
+
+        # The symbol argument can be one character
+        # or an array of characters.
+        # If there's only one, make it the first
+        # (and only) element of the array.
+        @symbols.push($symbol) unless @symbols;
+
+        my $num-symbols = @symbols.is-lazy ?? ∞ !! @symbols.elems;
+
         # If we'll be printing a <CR> after every symbol,
         # we don't want to see the cursor
         hide-cursor if $carriage-return;
 
-        start repeat {
-            # print a newline unless we've already started
-            print "\n" unless $stop-progress-bar.not;
-            $stop-progress-bar = False;
+        $t = Thread.start(
+            { # The 'code' argument
+                repeat {
+                    print "\n" unless $progress-bar-is-running;
+                    $progress-bar-is-running = True;
 
-            # If @symbols is a lazy list, don't loop through the inifinite list.
-            # If it's not lazy, then loop through the finite list.
-            say @symbols.is-lazy ?? @symbols[$++]
-                                   !! @symbols[$++ % $num-symbols];
+                    # If @symbols is a lazy list,
+                    # don't loop through the inifinite list.
+                    # If it's not lazy, then loop through the finite list.
+                    print @symbols.is-lazy ?? @symbols[$++]
+                                        !! @symbols[$++ % $num-symbols];
 
-            # The symbol will be followed by either a <CR>
-            # or a set number of spaces.
-            print $carriage-return ?? "\r"
-                                   !! ' ' x $spaces;
+                    # The symbol will be followed by either a <CR>
+                    # or a set number of spaces.
+                    print $carriage-return ?? "\r"
+                                        !! ' ' x $spaces;
 
-            sleep $sleep-time;
-        } until $stop-progress-bar;
+                    sleep $sleep-time;
+                } while $progress-bar-is-running;
+            }, # end of the 'code' argument
+            :app_lifetime
+        ) # end of $t = Thread.start
     }
-    elsif $start.not {
-note "\nStopped! $start; $stop-progress-bar";
+    else { # We're stopping the progress bar
         # print a newline unless we've already stopped
-        print "\n" unless $stop-progress-bar.so;
-        $stop-progress-bar = True;
+        print "\n" if $progress-bar-is-running;
+        $progress-bar-is-running = False;
+        $t.finish;
         show-cursor if $carriage-return;
-    }
-    else {
-note "\nOther! $start; $stop-progress-bar";
-        progress-bar $start, :$symbol, :@symbols,
-                     :$carriage-return, :$spaces, :$sleep-time;
     }
 } # end of multi progress-bar (StartStop $start,
 
