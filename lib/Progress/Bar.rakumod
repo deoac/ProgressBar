@@ -8,17 +8,17 @@ use v6.d;
 #          Notes:
 #         Author: <Shimon Bollinger>  (<deoac.shimon@gmail.com>)
 #        Version: 1.0
-#  Last Modified: Tue 21 Mar 2023 05:29:29 PM EDT
+#  Last Modified: Sat 08 Apr 2023 06:49:57 PM EDT
 #===============================================================================
 
 unit package Progress::Bar;
+
 
 # The progress bar can be turned on and off.
 # Pause, Resume, Off, and On are just aliases.
 enum StartStop is export «
                           :Stop(False)  :Start(True)
                           :Pause(False) :Resume(True)
-                          :Off(False)   :On(True)
                           :Spinner(2)   :Counter(3)
                          »;
 

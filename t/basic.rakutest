@@ -10,6 +10,9 @@ my $progress-bar2 = '# 0 # # # 1 # # # # 2 # # # #';
 # Depending on the precise timing,
 # we could get any of the following as output for testing.
 
+#TODO Resume with a different symbol.
+##TODO set-symbol(), get-symbol()
+
 my $output1 = qq:to/END/;
 Starting...
 $progress-bar1 Stopping
