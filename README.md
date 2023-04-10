@@ -1,82 +1,177 @@
 NAME
 ====
 
-Progress::Bar - Start and stop a progress bar while a program is running
+ProgressBar - Start and stop a progress bar while a program is compiling and running
 
 VERSION
 =======
 
-This documentation refers to <Progress::Bar> version 0.0.1
+This documentation refers to `ProgressBar` version 1.0.
 
 USAGE
 =====
 
-    use Progress::Bar;
+    use ProgressBar;
 
     progress-bar Start;
     progress-bar Stop;
-    progress-bar Restart;  # An alias for Start
-    progress-bar Pause;    # An alias for Stop
-
-REQUIRED ARGUMENTS
-==================
-
-A complete list of every argument that must appear on the command line. when the application is invoked, explaining what each of them does, any restrictions on where each one may appear (i.e. flags that must appear before or after filenames), and how the various arguments and options may interact (e.g. mutual exclusions, required combinations, etc.)
-
-If all of the application's arguments are optional this section may be omitted entirely.
-
-OPTIONS
-=======
-
-A complete list of every available option with which the application can be invoked, explaining what each does, and listing any restrictions, or interactions.
-
-If the application has no options this section may be omitted entirely.
+    progress-bar Counter;
+    progress-bar Spinner;
 
 DESCRIPTION
 ===========
 
-A full description of the application and its features. May include numerous subsections (i.e. =head2, =head3, etc.)
+If compiling takes a long time, or there are significant wait-times while running, it's nice to show a progress bar. The user then knows the program is still working and not hung or in an infinite loop.
 
-DIAGNOSTICS
-===========
+Simplest Use
+------------
 
-A list of every error and warning message that the application can generate (even the ones that will "never happen"), with a full explanation of each problem, one or more likely causes, and any suggested remedies. If the application generates exit status codes (e.g. under Unix) then list the exit status associated with each error.
+The simplest use is to put `progress-bar Start;` and `progress-bar Stop;` at the appropriate places in your code.
 
-CONFIGURATION AND ENVIRONMENT
-=============================
+The progress bar will look like this: `# # # # # # # ...`
 
-A full explanation of any configuration system(s) used by the application, including the names and locations of any configuration files, and the meaning of any environment variables or properties that can be set. These descriptions must also include details of any configuration language used (also see QUOTE \" " INCLUDETEXT "19_Miscellanea" "XREF40334_Configuration_Files_"\! Configuration Files QUOTE \" " QUOTE " in Chapter " in Chapter INCLUDETEXT "19_Miscellanea" "XREF55683__"\! 19).
+You can use `On` and `Resume` as synonyms for `Start`; `Off` and `Pause` as synonyms for `Stop`.
+
+I recommend adding `END { progress-bar Stop; }`.
+
+Counter
+-------
+
+    progress-bar Counter;
+
+The progress bar will simply be the integers increasing every 0.15 seconds. Use `progress-bar Stop` to, well, *stop* the Counter.
+
+Spinner
+-------
+
+    progress-bar Spinner;
+
+The progress bar will loop thru these characters: `| / - \` Use `progress-bar Stop` to, well, *stop* the Spinner.
+
+OPTIONS
+=======
+
+The function has the following Signature:
+
+    multi progress-bar (Bools:D $start,
+                        Str:D   :$symbol          = '',
+                                :@symbols         = [],
+                        Bool:D  :$carriage-return = False,
+                        Int:D   :$spaces          = 1,
+                        Rat()   :$sleep-time      = 0.25) is export {
+
+$start (Required)
+-----------------
+
+Any one of `Start`, `Stop`, `Resume`, `Pause`, `On`, or `Off`.
+
+$symbol (Optional)
+------------------
+
+This will be the symbol that, well, progresses across your screen. It will default to the hash symbol `#`.
+
+Once you set the `$symbol`, it will use that symbol until you change it. That is, after `Stop`ping and `Resume`ing, it won't revert back to `#`.
+
+:@symbols (Optional)
+--------------------
+
+If you want more than one symbol in your progress bar (such as `♣️ ♦️ ♠️ ❤️ `), use this array. The bar will loop over the symbols. It will accept a lazy array such as `(1..∞)`.
+
+Defaults to an empty array.
+
+:$carriage-return (Optional)
+----------------------------
+
+Do you want to cursor to return to the left end of the line between each symbol? This is useful for spinners that stay in one place.
+
+Defaults to `False`.
+
+:$spaces (Optional)
+-------------------
+
+How many spaces do you want between your symbols?
+
+Defaults to 1 space.
+
+:$sleep-time (Optional)
+-----------------------
+
+How much time do you want to pass between each printing of your symbols?
+
+Defaults to 0.25 seconds.
+
+EXPORTed Symbols
+================
+
+:MANDATORY
+----------
+
+  * sub progress-bar {...}
+
+:DEFAULT
+--------
+
+    Start Stop On Off Resume Pause Spinner Counter
+
+Tags
+----
+
+  * :StartStop - to import only `Start` and `Stop`.
+
+  * :OnOff - to import only `On` and `Off`.
+
+  * :ResumePause - to import only `Resume` and `Pause`.
+
+  * :Spinner - to import only the `Spinner`.
+
+  * :Counter - to import only the `Counter`.
+
+  * :Bools - to import `Start`, `Stop`, `On`, `Off`, `Resume`, `Pause` *only*. (i.e. doesn't import `Spinner` or `Counter`).
+
+  * :Specials - to import *only* Spinner and Counter. (i.e. doesn't import an y of the `:Bools`).
+
+zi=head1 DIAGNOSTICS
+
+None.
 
 DEPENDENCIES
 ============
 
-A list of all the other modules that this module relies upon, including any restrictions on versions, and an indication whether these required modules are part of the standard Perl distribution, part of the module's distribution, or must be installed separately.
+Build
+-----
+
+None.
+
+Testing
+-------
+
+    use Test;
+    use Test::Output;
+
+The testing takes about 21 seconds. I recommend using `--verbose` so you have some output while waiting.
 
 INCOMPATIBILITIES
 =================
 
-A list of any modules that this module cannot be used in conjunction with. This may be due to name conflicts in the interface, or competition for system or program resources, or due to internal limitations of Perl (for example, many modules that use source code filters are mutually incompatible).
+None known.
 
 BUGS AND LIMITATIONS
 ====================
 
-A list of known problems with the module, together with some indication whether they are likely to be fixed in an upcoming release.
-
-Also a list of restrictions on the features the module does provide: data types that cannot be handled, performance issues and the circumstances in which they may arise, practical limitations on the size of data sets, special cases that are not (yet) handled, etc.
-
-The initial template usually just has:
-
-There are no known bugs in this module. Please report problems to <Shimon Bollinger> (<deoac.shimon@gmail.com>) Patches are welcome.
+None known.
 
 AUTHOR
 ======
 
-<Shimon Bollinger> (<deoac.shimon@gmail.com>)
+Shimon Bollinger (deoac.shimon@gmail.com)
+
+Comments, pull requests, problems, and suggestions are welcome.
 
 LICENCE AND COPYRIGHT
 =====================
 
-This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself. See [perlartistic](http://perldoc.perl.org/perlartistic.html).
+This module is free software; you can redistribute it and/or modify it under the [perlartistic](http://perldoc.perl.org/perlartistic.html).
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+[?25h

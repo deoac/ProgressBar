@@ -1,20 +1,26 @@
 {
-  "name": "Progress::Bar",
-
-  "description": "A module to start and stop a progress bar, while a program is compiling and running.",
-  "version": "1.0",
-  "raku": "6.d",
+  "auth": "zef:deoac",
   "authors": [
     "Shimon Bollinger"
   ],
-  "auth": "github:deoac",
-  "depends": ["Terminal::ANSI"],
-  "build-depends": [],
-  "test-depends": ["Test", "Trap"],
-  "provides": {
-    "Progress::Bar": "lib/Progress/Bar.rakumod"
-  },
-  "resources": [],
+  "build-depends": [
+  ],
+  "depends": [
+    "Trap"
+  ],
+  "description": "A module to start and stop a progress bar, while a program is compiling and running.",
   "license": "Artistic-2.0",
-  "source-url": "https://github.com/deoac/ProgressBar.git"
+  "name": "Progress::Bar",
+  "provides": {
+    "ProgressBar": "lib/ProgressBar.rakumod"
+  },
+  "raku": "6.d",
+  "resources": [
+  ],
+  "source-url": "https://github.com/deoac/ProgressBar.git",
+  "test-depends": [
+    "Test",
+    "Test::Output"
+  ],
+  "version": "1.0"
 }
