@@ -39,14 +39,14 @@ Counter
 
     progress-bar Counter;
 
-The progress bar will simply be the integers increasing every 0.15 seconds. Use `progress-bar Stop` to, well, *stop* the Counter.
+The progress bar will simply be the integers increasing every 0.15 seconds. Use `progress-bar Stop` to, well, stop the Counter.
 
 Spinner
 -------
 
     progress-bar Spinner;
 
-The progress bar will loop thru these characters: `| / - \` Use `progress-bar Stop` to, well, *stop* the Spinner.
+The progress bar will loop thru these characters: `| / - \` Use `progress-bar Stop` to, well, stop the Spinner.
 
 OPTIONS
 =======
@@ -63,7 +63,7 @@ The function has the following Signature:
 $start (Required)
 -----------------
 
-Any one of `Start`, `Stop`, `Resume`, `Pause`, `On`, or `Off`.
+Any one of `Start`, `Stop`, `Resume`, `Pause`, `On`, `Off`, `Counter`, or `Spinner`.
 
 $symbol (Optional)
 ------------------
@@ -128,9 +128,10 @@ Tags
 
   * :Bools - to import `Start`, `Stop`, `On`, `Off`, `Resume`, `Pause` *only*. (i.e. doesn't import `Spinner` or `Counter`).
 
-  * :Specials - to import *only* Spinner and Counter. (i.e. doesn't import an y of the `:Bools`).
+  * :Specials - to import *only* Spinner and Counter. (i.e. doesn't import any of the `:Bools`).
 
-zi=head1 DIAGNOSTICS
+DIAGNOSTICS
+===========
 
 None.
 
@@ -173,5 +174,3 @@ LICENCE AND COPYRIGHT
 This module is free software; you can redistribute it and/or modify it under the [perlartistic](http://perldoc.perl.org/perlartistic.html).
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-[?25h
