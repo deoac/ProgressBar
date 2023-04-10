@@ -8,7 +8,7 @@ use v6.d;
 #          Notes:
 #         Author: <Shimon Bollinger>  (<deoac.shimon@gmail.com>)
 #        Version: 1.0
-#  Last Modified: Sun 09 Apr 2023 10:03:51 PM EDT
+#  Last Modified: Sun 09 Apr 2023 10:37:53 PM EDT
 #===============================================================================
 
 unit package ProgressBar;
@@ -153,14 +153,14 @@ I recommend adding C<END { progress-bar Stop; }>.
     progress-bar Counter;
 
 The progress bar will simply be the integers increasing every 0.15 seconds.
-Use C<progress-bar Stop> to, well, I<stop> the Counter.
+Use C<progress-bar Stop> to, well, stop the Counter.
 
 =head2 Spinner
 
     progress-bar Spinner;
 
 The progress bar will loop thru these characters: C<| / - \>
-Use C<progress-bar Stop> to, well, I<stop> the Spinner.
+Use C<progress-bar Stop> to, well, stop the Spinner.
 
 =head1 OPTIONS
 
@@ -175,7 +175,7 @@ The function has the following Signature:
 
 =head2 $start  (Required)
 
-Any one of C<Start>, C<Stop>, C<Resume>, C<Pause>, C<On>, or C<Off>.
+Any one of C<Start>, C<Stop>, C<Resume>, C<Pause>, C<On>, C<Off>, C<Counter>, or C<Spinner>.
 
 =head2 $symbol (Optional)
 
@@ -188,7 +188,7 @@ That is, after C<Stop>ping and C<Resume>ing, it won't revert back to C<#>.
 =head2 :@symbols (Optional)
 
 If you want more than one symbol in your progress bar (such as C< ♣️ ♦️ ♠️ ❤️  >),
-use this array. The bar will loop over the symbols. It will accept a lazy
+use this array. The bar will loop over the symbols. It will also accept a lazy
 array such as C<(1..∞)>.
 
 Defaults to an empty array.
@@ -238,9 +238,9 @@ Defaults to 0.25 seconds.
 I<only>. (i.e. doesn't import C<Spinner> or C<Counter>).
 
 =item :Specials - to import I<only> Spinner and Counter. (i.e. doesn't import
-an  y of the C<:Bools>).
+any of the C<:Bools>).
 
-zi=head1 DIAGNOSTICS
+=head1 DIAGNOSTICS
 
 None.
 
