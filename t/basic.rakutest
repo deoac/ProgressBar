@@ -1,0 +1,8 @@
+use v6.d;
+use Test;
+use ProgressBar;
+
+plan 1;
+
+use-ok 'ProgressBar', 'ProgressBar loads ok';
+
