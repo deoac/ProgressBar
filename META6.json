@@ -6,7 +6,6 @@
   "build-depends": [
   ],
   "depends": [
-    "Trap"
   ],
   "description": "A module to start and stop a progress bar, while a program is compiling and running.",
   "license": "Artistic-2.0",
