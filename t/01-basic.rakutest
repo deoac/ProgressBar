@@ -1,0 +1,63 @@
+use v6.d;
+use ProgressBar;
+use Test;
+
+plan 2;
+
+my $output = qq:to/END/;
+Starting...
+
+0 # # # # 1 # # # # 2 # # # # 
+Stopping0 1 2 Starting
+# 0 # # # 1 # # # # 2 # # # # 
+Pausing0 1 2 Resuming
+# 0 # # # 1 # # # # 2 # # # # 
+On-ing0 1 2 Off-ing
+# 0 # # # 1 # # # # 2 # # # # Finished
+END
+
+use Test::Output;
+my &test-code = sub {
+    progress-bar Start;
+    say "Starting...";
+    for ^3 { print "$_ "; sleep 1 }
+
+    progress-bar Stop;
+    print "Stopping";
+    for ^3 { print "$_ "; sleep 1 }
+
+    progress-bar Start;
+    print "Starting";
+    for ^3 { print "$_ "; sleep 1 }
+
+    progress-bar Pause;
+    print "Pausing";
+    for ^3 { print "$_ "; sleep 1 }
+
+    progress-bar Resume;
+    print "Resuming";
+    for ^3 { print "$_ "; sleep 1 }
+
+    progress-bar Off;
+    print "On-ing";
+    for ^3 { print "$_ "; sleep 1 }
+
+    progress-bar On;
+    print "Off-ing";
+    for ^3 { print "$_ "; sleep 1 }
+
+    say "Finished";
+}; # end of my &test =
+
+say "Please wait ~ 21 seconds...";
+#progress-bar Start, symbols => (0..∞), carriage-return => True, sleep-time => 1;
+
+output-is &test-code, $output, "Is the output good?";
+
+my $time = DateTime.now - BEGIN { DateTime.now };
+is-approx $time, 21, 1, "Took the right amount of time.";
+
+done-testing;
+
+END { progress-bar Stop; }
+
