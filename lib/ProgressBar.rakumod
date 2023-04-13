@@ -8,7 +8,7 @@ use v6.d;
 #          Notes:
 #         Author: <Shimon Bollinger>  (<deoac.shimon@gmail.com>)
 #        Version: 1.0
-#  Last Modified: Sun 09 Apr 2023 10:37:53 PM EDT
+#  Last Modified: Thu 13 Apr 2023 04:50:47 PM EDT
 #===============================================================================
 
 unit package ProgressBar;
@@ -177,10 +177,11 @@ The function has the following Signature:
 
 Any one of C<Start>, C<Stop>, C<Resume>, C<Pause>, C<On>, C<Off>, C<Counter>, or C<Spinner>.
 
-=head2 $symbol (Optional)
+=head2 :$symbol (Optional)
 
-This will be the symbol that, well, progresses across your screen. It will
-default to the hash symbol C<#>.
+This will be the symbol that, well, progresses across your screen. 
+
+Defaults to the hash symbol C<#>.
 
 Once you set the C<$symbol>, it will use that symbol until you change it.
 That is, after C<Stop>ping and C<Resume>ing, it won't revert back to C<#>.
@@ -188,7 +189,7 @@ That is, after C<Stop>ping and C<Resume>ing, it won't revert back to C<#>.
 =head2 :@symbols (Optional)
 
 If you want more than one symbol in your progress bar (such as C< ♣️ ♦️ ♠️ ❤️  >),
-use this array. The bar will loop over the symbols. It will also accept a lazy
+use the C<@symbols> array. The bar will loop over the symbols. It will also accept a lazy
 array such as C<(1..∞)>.
 
 Defaults to an empty array.
@@ -242,8 +243,25 @@ any of the C<:Bools>).
 
 =head1 DIAGNOSTICS
 
-None.
+When testing, you may get this error:
 
+    Unhandled exception in code scheduled on thread 4
+    Type check failed in binding to parameter '$entry'; 
+    expected TAP::Entry but got Nil (Nil)
+
+I don't know the cause, but it's irrelevant to whether the tests pass. 
+
+If you get: 
+
+    # From t/basic.rakutest
+    ok 1 - ProgressBar loads ok
+
+    # From xt/*.rakutest
+    Please wait ~ 21 seconds...
+    ok 1 - Is the output good?
+    ok 2 - Took the right amount of time.
+
+then the tests passed.
 
 =head1 DEPENDENCIES
 

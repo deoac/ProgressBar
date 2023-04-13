@@ -75,7 +75,7 @@ Once you set the `$symbol`, it will use that symbol until you change it. That is
 :@symbols (Optional)
 --------------------
 
-If you want more than one symbol in your progress bar (such as `♣️ ♦️ ♠️ ❤️ `), use this array. The bar will loop over the symbols. It will accept a lazy array such as `(1..∞)`.
+If you want more than one symbol in your progress bar (such as `♣️ ♦️ ♠️ ❤️ `), use this array. The bar will loop over the symbols. It will also accept a lazy array such as `(1..∞)`.
 
 Defaults to an empty array.
 
@@ -133,7 +133,25 @@ Tags
 DIAGNOSTICS
 ===========
 
-None.
+When testing, you may get this error:
+
+    Unhandled exception in code scheduled on thread 4
+    Type check failed in binding to parameter '$entry'; 
+    expected TAP::Entry but got Nil (Nil)
+
+I don't know the cause, but it's irrelevant to whether the tests pass. 
+
+If you get: 
+
+    # From t/basic.rakutest
+    ok 1 - ProgressBar loads ok
+
+    # From xt/*.rakutest
+    Please wait ~ 21 seconds...
+    ok 1 - Is the output good?
+    ok 2 - Took the right amount of time.
+
+then the tests passed.
 
 DEPENDENCIES
 ============
@@ -174,3 +192,4 @@ LICENCE AND COPYRIGHT
 This module is free software; you can redistribute it and/or modify it under the [perlartistic](http://perldoc.perl.org/perlartistic.html).
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+[?25h
