@@ -6,7 +6,7 @@ ProgressBar - Start and stop a progress bar while a program is compiling and run
 VERSION
 =======
 
-This documentation refers to `ProgressBar` version 1.0.
+This documentation refers to `ProgressBar` version 1.0.0
 
 USAGE
 =====
@@ -65,17 +65,19 @@ $start (Required)
 
 Any one of `Start`, `Stop`, `Resume`, `Pause`, `On`, `Off`, `Counter`, or `Spinner`.
 
-$symbol (Optional)
-------------------
+:$symbol (Optional)
+-------------------
 
-This will be the symbol that, well, progresses across your screen. It will default to the hash symbol `#`.
+This will be the symbol that, well, progresses across your screen. 
+
+Defaults to the hash symbol `#`.
 
 Once you set the `$symbol`, it will use that symbol until you change it. That is, after `Stop`ping and `Resume`ing, it won't revert back to `#`.
 
 :@symbols (Optional)
 --------------------
 
-If you want more than one symbol in your progress bar (such as `♣️ ♦️ ♠️ ❤️ `), use this array. The bar will loop over the symbols. It will also accept a lazy array such as `(1..∞)`.
+If you want more than one symbol in your progress bar (such as `♣️ ♦️ ♠️ ❤️ `), use the `@symbols` array. The bar will loop over the symbols. It will also accept a lazy array such as `(1..∞)`.
 
 Defaults to an empty array.
 
@@ -192,4 +194,4 @@ LICENCE AND COPYRIGHT
 This module is free software; you can redistribute it and/or modify it under the [perlartistic](http://perldoc.perl.org/perlartistic.html).
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-[?25h
+
