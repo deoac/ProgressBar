@@ -7,8 +7,8 @@ use v6.d;
 #
 #          Notes:
 #         Author: <Shimon Bollinger>  (<deoac.shimon@gmail.com>)
-#        Version: 1.0.0
-#  Last Modified: Thu 13 Apr 2023 04:59:11 PM EDT
+#        Version: 1.0.1
+#  Last Modified: Thu 13 Apr 2023 05:48:24 PM EDT
 #===============================================================================
 
 unit package ProgressBar;
@@ -65,7 +65,6 @@ multi progress-bar (Bools:D $start,
         # or an array of characters.
         # If there's only one, make it the first
         # (and only) element of the array.
-#prompt "sym => $sym; symbol => $symbol; ({$symbol.so}; ({@symbols.so}))";
         $sym = $symbol if $symbol.so;
         @symbols.push($sym) unless @symbols;
 
@@ -115,19 +114,30 @@ ProgressBar - Start and stop a progress bar
 while a program is compiling and  running
 
 
-=head1 VERSION
+=head1 VERSION 
 
-This documentation refers to C<ProgressBar> version 1.0.0
+This documentation refers to C<ProgressBar> version 1.0.1
 
 
 =head1 USAGE
 
-    use ProgressBar;
+=begin code :lang<raku>
 
-    progress-bar Start;
-    progress-bar Stop;
-    progress-bar Counter;
-    progress-bar Spinner;
+use ProgressBar;
+
+# To start a progress bar:
+progress-bar Start;
+
+# To start a counter as the progress bar:
+progress-bar Counter;
+
+# To start a spinner as the progress bar:
+progress-bar Spinner;
+
+# To stop any of the above progress bars:
+progress-bar Stop;
+
+=end code
 
 =head1 DESCRIPTION
 
@@ -150,14 +160,22 @@ I recommend adding C<END { progress-bar Stop; }>.
 
 =head2 Counter
 
-    progress-bar Counter;
+=begin code :lang<raku>
+
+progress-bar Counter;
+
+=end code
 
 The progress bar will simply be the integers increasing every 0.15 seconds.
 Use C<progress-bar Stop> to, well, stop the Counter.
 
 =head2 Spinner
 
-    progress-bar Spinner;
+=begin code :lang<raku>
+
+progress-bar Spinner;
+
+=end code
 
 The progress bar will loop thru these characters: C<| / - \>
 Use C<progress-bar Stop> to, well, stop the Spinner.
@@ -166,12 +184,16 @@ Use C<progress-bar Stop> to, well, stop the Spinner.
 
 The function has the following Signature:
 
-    multi progress-bar (Bools:D $start,
-                        Str:D   :$symbol          = '',
-                                :@symbols         = [],
-                        Bool:D  :$carriage-return = False,
-                        Int:D   :$spaces          = 1,
-                        Rat()   :$sleep-time      = 0.25) is export {
+=begin code :lang<raku>
+
+multi progress-bar (Bools:D $start,
+                    Str:D   :$symbol          = '',
+                            :@symbols         = [],
+                    Bool:D  :$carriage-return = False,
+                    Int:D   :$spaces          = 1,
+                    Rat()   :$sleep-time      = 0.25) is export {
+
+=end code
 
 =head2 $start  (Required)
 
@@ -241,28 +263,6 @@ I<only>. (i.e. doesn't import C<Spinner> or C<Counter>).
 =item :Specials - to import I<only> Spinner and Counter. (i.e. doesn't import
 any of the C<:Bools>).
 
-=head1 DIAGNOSTICS
-
-When testing, you may get this error:
-
-    Unhandled exception in code scheduled on thread 4
-    Type check failed in binding to parameter '$entry'; 
-    expected TAP::Entry but got Nil (Nil)
-
-I don't know the cause, but it's irrelevant to whether the tests pass. 
-
-If you get: 
-
-    # From t/basic.rakutest
-    ok 1 - ProgressBar loads ok
-
-    # From xt/*.rakutest
-    Please wait ~ 21 seconds...
-    ok 1 - Is the output good?
-    ok 2 - Took the right amount of time.
-
-then the tests passed.
-
 =head1 DEPENDENCIES
 
 =head2 Build
@@ -271,8 +271,12 @@ None.
 
 =head2 Testing
 
-        use Test;
-        use Test::Output;
+=begin code :lang<raku>
+
+use Test;
+use Test::Output;
+
+=end code
 
 The testing takes about 21 seconds.  I recommend using C<--verbose> so you
 have some output while waiting.
@@ -283,15 +287,56 @@ None known.
 
 =head1 BUGS AND LIMITATIONS
 
+=head2 Weird testing bug
+
+When testing, you may get this error:
+
+    Unhandled exception in code scheduled on thread 4
+    Type check failed in binding to parameter '$entry'; expected TAP::Entry but got Nil (Nil)
+
+I don't know the cause, but it's irrelevant to whether the tests pass. 
+
+If you get: 
+
+=begin code :lang<bash>
+
+# From t/basic.rakutest
+ok 1 - ProgressBar loads ok
+
+# From xt/*.rakutest
+Please wait ~ 21 seconds...
+ok 1 - Is the output good?
+ok 2 - Took the right amount of time.
+
+=end code
+
+then the tests passed.
+
+=head2 Difference from Term::ProgressBar
+
+Our module creates an open-ended progress bar.  That is, it doesn't know how
+much time will be required before stopping.  So we can't have
+a C<[=====...]54%> display.  If you want that functionality, please check out
+C<Term::ProgressBar>.
+
+Our progress bar is especially useful when compiling and loading takes
+a while.
+
+
+
 None known.
 
 =head1 AUTHOR
 
 Shimon Bollinger  (deoac.shimon@gmail.com)
 
+Source can be located at https://github.com/deoac/ProgressBar .
+
 Comments, pull requests, problems, and suggestions are welcome.
 
 =head1 LICENCE AND COPYRIGHT
+
+Copyright 2023, Shimon Bollinger
 
 This module is free software; you can redistribute it and/or
 modify it under the L<perlartistic|http://perldoc.perl.org/perlartistic.html>.
