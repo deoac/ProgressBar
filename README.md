@@ -3,29 +3,20 @@ NAME
 
 ProgressBar - Start and stop a progress bar while a program is compiling and running
 
-VERSION 
-========
+VERSION
+=======
 
-This documentation refers to `ProgressBar` version 1.0.1
+This documentation refers to `ProgressBar` version 1.0.0
 
 USAGE
 =====
 
-```raku
-use ProgressBar;
+    use ProgressBar;
 
-# To start a progress bar:
-progress-bar Start;
-
-# To start a counter as the progress bar:
-progress-bar Counter;
-
-# To start a spinner as the progress bar:
-progress-bar Spinner;
-
-# To stop any of the above progress bars:
-progress-bar Stop;
-```
+    progress-bar Start;
+    progress-bar Stop;
+    progress-bar Counter;
+    progress-bar Spinner;
 
 DESCRIPTION
 ===========
@@ -46,18 +37,14 @@ I recommend adding `END { progress-bar Stop; }`.
 Counter
 -------
 
-```raku
-progress-bar Counter;
-```
+    progress-bar Counter;
 
 The progress bar will simply be the integers increasing every 0.15 seconds. Use `progress-bar Stop` to, well, stop the Counter.
 
 Spinner
 -------
 
-```raku
-progress-bar Spinner;
-```
+    progress-bar Spinner;
 
 The progress bar will loop thru these characters: `| / - \` Use `progress-bar Stop` to, well, stop the Spinner.
 
@@ -66,14 +53,12 @@ OPTIONS
 
 The function has the following Signature:
 
-```raku
-multi progress-bar (Bools:D $start,
-                    Str:D   :$symbol          = '',
-                            :@symbols         = [],
-                    Bool:D  :$carriage-return = False,
-                    Int:D   :$spaces          = 1,
-                    Rat()   :$sleep-time      = 0.25) is export {
-```
+    multi progress-bar (Bools:D $start,
+                        Str:D   :$symbol          = '',
+                                :@symbols         = [],
+                        Bool:D  :$carriage-return = False,
+                        Int:D   :$spaces          = 1,
+                        Rat()   :$sleep-time      = 0.25) is export {
 
 $start (Required)
 -----------------
@@ -147,6 +132,29 @@ Tags
 
   * :Specials - to import *only* Spinner and Counter. (i.e. doesn't import any of the `:Bools`).
 
+DIAGNOSTICS
+===========
+
+When testing, you may get this error:
+
+    Unhandled exception in code scheduled on thread 4
+    Type check failed in binding to parameter '$entry'; 
+    expected TAP::Entry but got Nil (Nil)
+
+I don't know the cause, but it's irrelevant to whether the tests pass. 
+
+If you get: 
+
+    # From t/basic.rakutest
+    ok 1 - ProgressBar loads ok
+
+    # From xt/*.rakutest
+    Please wait ~ 21 seconds...
+    ok 1 - Is the output good?
+    ok 2 - Took the right amount of time.
+
+then the tests passed.
+
 DEPENDENCIES
 ============
 
@@ -158,10 +166,8 @@ None.
 Testing
 -------
 
-```raku
-use Test;
-use Test::Output;
-```
+    use Test;
+    use Test::Output;
 
 The testing takes about 21 seconds. I recommend using `--verbose` so you have some output while waiting.
 
@@ -173,36 +179,6 @@ None known.
 BUGS AND LIMITATIONS
 ====================
 
-Weird testing bug When testing, you may get this error:
--------------------------------------------------------
-
-    Unhandled exception in code scheduled on thread 4
-    Type check failed in binding to parameter '$entry'; 
-    expected TAP::Entry but got Nil (Nil)
-
-I don't know the cause, but it's irrelevant to whether the tests pass. 
-
-If you get: 
-
-```bash
-# From t/basic.rakutest
-ok 1 - ProgressBar loads ok
-
-# From xt/*.rakutest
-Please wait ~ 21 seconds...
-ok 1 - Is the output good?
-ok 2 - Took the right amount of time.
-```
-
-then the tests passed.
-
-Difference from Term::ProgressBar
----------------------------------
-
-Our module creates an open-ended progress bar. That is, it doesn't know how much time will be required before stopping. So we can't have a `[=====...]54%` display. If you want that functionality, please check out `Term::ProgressBar`.
-
-Our progress bar is especially useful when compiling and loading takes a while.
-
 None known.
 
 AUTHOR
@@ -210,16 +186,12 @@ AUTHOR
 
 Shimon Bollinger (deoac.shimon@gmail.com)
 
-Source can be located at https://github.com/deoac/ProgressBar .
-
 Comments, pull requests, problems, and suggestions are welcome.
 
 LICENCE AND COPYRIGHT
 =====================
 
-Copyright 2023, Shimon Bollinger
-
 This module is free software; you can redistribute it and/or modify it under the [perlartistic](http://perldoc.perl.org/perlartistic.html).
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-[?25h
+
