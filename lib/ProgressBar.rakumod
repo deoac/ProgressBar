@@ -7,8 +7,8 @@ use v6.d;
 #
 #          Notes:
 #         Author: <Shimon Bollinger>  (<deoac.shimon@gmail.com>)
-#        Version: 1.0.1
-#  Last Modified: Thu 13 Apr 2023 05:48:24 PM EDT
+#        Version: 1.1.0
+#  Last Modified: Sat 15 Apr 2023 09:49:46 PM EDT
 #===============================================================================
 
 unit package ProgressBar;
@@ -116,7 +116,7 @@ while a program is compiling and  running
 
 =head1 VERSION 
 
-This documentation refers to C<ProgressBar> version 1.0.1
+This documentation refers to C<ProgressBar> version 1.1.0
 
 
 =head1 USAGE
